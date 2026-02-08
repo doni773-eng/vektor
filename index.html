@@ -12,7 +12,9 @@ body{
   padding:10px;
   background:#f4f6f8;
 }
-h2{text-align:center;}
+
+h2{text-align:center;font-size:1.4rem;}
+
 .card{
   background:white;
   padding:15px;
@@ -20,28 +22,46 @@ h2{text-align:center;}
   border-radius:10px;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-input{width:60px;padding:5px;margin:3px;}
+
+input{
+  width:70px;
+  padding:8px;
+  margin:4px;
+  font-size:1rem;
+}
+
 button{
-  padding:8px 14px;
+  padding:10px 16px;
+  margin-top:6px;
+  font-size:1rem;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
   background:#007bff;
   color:white;
 }
+
 .result{
   margin-top:10px;
   background:#eef;
   padding:10px;
   border-radius:6px;
+  font-size:0.95rem;
 }
+
 canvas{
+  width:100%;
+  max-width:460px;
+  height:auto;
   border:1px solid #ccc;
   background:white;
+  display:block;
+  margin:auto;
   touch-action:none;
 }
-.controls{text-align:center;margin-top:8px;}
 
-/* ===== VEKTOR KOLOM RAPI + KURUNG TINGGI ===== */
+.controls{text-align:center;margin-top:10px;}
+
+/* ===== VEKTOR KOLOM ===== */
 .vektor{
   display:inline-grid;
   grid-template-columns:auto auto auto;
@@ -49,19 +69,21 @@ canvas{
   gap:6px;
   font-weight:bold;
 }
-
 .vektor .isi{
   display:grid;
   grid-template-rows:repeat(2, auto);
   text-align:center;
   line-height:1.4;
 }
-
-/* kurung ditinggikan */
 .kurung{
   display:inline-block;
-  transform: scaleY(1.8);
+  transform:scaleY(1.8);
   font-size:1.2em;
+}
+
+@media(max-width:480px){
+  h2{font-size:1.2rem;}
+  input{width:60px;}
 }
 </style>
 </head>
@@ -96,7 +118,7 @@ OB = (<input id="obx" type="number"> , <input id="oby" type="number">)<br><br>
 <button onclick="hitung()">Hitung & Gambar</button>
 <div class="result" id="hasilAB"></div><br>
 
-<canvas id="kanvas" width="460" height="460"></canvas>
+<canvas id="kanvas"></canvas>
 
 <div class="controls">
 <button onclick="zoom(1.2)">➕ Zoom</button>
@@ -105,7 +127,7 @@ OB = (<input id="obx" type="number"> , <input id="oby" type="number">)<br><br>
 </div>
 
 <script>
-/* ===== TEMPLATE VEKTOR KOLOM ===== */
+/* ===== TEMPLATE VEKTOR ===== */
 function vektorHTML(x,y){
   return `
   <span class="vektor">
@@ -120,36 +142,78 @@ function vektorHTML(x,y){
 
 /* ===== VEKTOR NEGATIF ===== */
 function negatif(){
-  let x=ax.value, y=ay.value;
-  if(x===""||y===""){
+  if(ax.value===""||ay.value===""){
     hasilNegatif.innerHTML="⚠️ Masukkan kedua komponen vektor.";
     return;
   }
-  x=Number(x); y=Number(y);
-
   hasilNegatif.innerHTML=`
-  Diketahui a = ${vektorHTML(x,y)}<br>
-  −a = ${vektorHTML(-x,-y)}
+  Diketahui a = ${vektorHTML(ax.value,ay.value)}<br>
+  −a = ${vektorHTML(-ax.value,-ay.value)}
   `;
 }
 
 /* ===== VEKTOR POSISI ===== */
 function posisi(){
-  let x=px.value, y=py.value;
-  if(x===""||y===""){
+  if(px.value===""||py.value===""){
     hasilPosisi.innerHTML="⚠️ Masukkan koordinat A.";
     return;
   }
-  hasilPosisi.innerHTML=`Vektor posisi OA = ${vektorHTML(x,y)}`;
+  hasilPosisi.innerHTML=`Vektor posisi OA = ${vektorHTML(px.value,py.value)}`;
 }
 
 /* ===== KANVAS ===== */
 let canvas=document.getElementById("kanvas");
 let ctx=canvas.getContext("2d");
 let scale=30;
-let offsetX=canvas.width/2;
-let offsetY=canvas.height/2;
+let offsetX,offsetY;
 let lastData=null;
+
+/* ===== RESIZE ===== */
+function resizeCanvas(){
+  let s=Math.min(window.innerWidth-40,460);
+  canvas.width=s;
+  canvas.height=s;
+  offsetX=s/2;
+  offsetY=s/2;
+  draw(lastData);
+}
+window.addEventListener("resize",resizeCanvas);
+resizeCanvas();
+
+/* ===== DRAG (GESER KIRI KANAN) ===== */
+let dragging=false,startX,startY;
+
+canvas.addEventListener("mousedown",e=>{
+  dragging=true;
+  startX=e.clientX;
+  startY=e.clientY;
+});
+canvas.addEventListener("mousemove",e=>{
+  if(!dragging) return;
+  offsetX+=e.clientX-startX;
+  offsetY+=e.clientY-startY;
+  startX=e.clientX;
+  startY=e.clientY;
+  draw(lastData);
+});
+canvas.addEventListener("mouseup",()=>dragging=false);
+canvas.addEventListener("mouseleave",()=>dragging=false);
+
+/* touch (HP) */
+canvas.addEventListener("touchstart",e=>{
+  dragging=true;
+  startX=e.touches[0].clientX;
+  startY=e.touches[0].clientY;
+});
+canvas.addEventListener("touchmove",e=>{
+  if(!dragging) return;
+  offsetX+=e.touches[0].clientX-startX;
+  offsetY+=e.touches[0].clientY-startY;
+  startX=e.touches[0].clientX;
+  startY=e.touches[0].clientY;
+  draw(lastData);
+});
+canvas.addEventListener("touchend",()=>dragging=false);
 
 /* ===== HITUNG ===== */
 function hitung(){
@@ -159,10 +223,8 @@ function hitung(){
 
   hasilAB.innerHTML=`
   AB = OB − OA<br><br>
-  OB = ${vektorHTML(b.x,b.y)}
-  −
-  OA = ${vektorHTML(a.x,a.y)}
-  <br><br>
+  OB = ${vektorHTML(b.x,b.y)} −
+  OA = ${vektorHTML(a.x,a.y)}<br><br>
   <b>AB = ${vektorHTML(ab.x,ab.y)}</b>
   `;
 
@@ -170,19 +232,16 @@ function hitung(){
   draw(lastData);
 }
 
-/* ===== GAMBAR ===== */
-function draw(data){
+/* ===== DRAW ===== */
+function draw(d){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  grid();
-  angka();
-  if(!data) return;
-
-  vektor(0,0,data.a.x,data.a.y,"blue","OA");
-  vektor(0,0,data.b.x,data.b.y,"green","OB");
-  vektor(data.a.x,data.a.y,data.b.x,data.b.y,"red","AB");
-
-  titik(data.a.x,data.a.y,"A");
-  titik(data.b.x,data.b.y,"B");
+  grid(); angka();
+  if(!d) return;
+  vektor(0,0,d.a.x,d.a.y,"blue","OA");
+  vektor(0,0,d.b.x,d.b.y,"green","OB");
+  vektor(d.a.x,d.a.y,d.b.x,d.b.y,"red","AB");
+  titik(d.a.x,d.a.y,"A");
+  titik(d.b.x,d.b.y,"B");
 }
 
 /* ===== GRID ===== */
@@ -220,44 +279,29 @@ function angka(){
 }
 
 /* ===== VEKTOR ===== */
-function vektor(x1,y1,x2,y2,color,label){
-  let X1=offsetX+x1*scale;
-  let Y1=offsetY-y1*scale;
-  let X2=offsetX+x2*scale;
-  let Y2=offsetY-y2*scale;
-
-  ctx.strokeStyle=color;
-  ctx.fillStyle=color;
-  ctx.beginPath();
-  ctx.moveTo(X1,Y1);
-  ctx.lineTo(X2,Y2);
-  ctx.stroke();
-
+function vektor(x1,y1,x2,y2,c,l){
+  let X1=offsetX+x1*scale,Y1=offsetY-y1*scale;
+  let X2=offsetX+x2*scale,Y2=offsetY-y2*scale;
+  ctx.strokeStyle=c; ctx.fillStyle=c;
+  ctx.beginPath(); ctx.moveTo(X1,Y1); ctx.lineTo(X2,Y2); ctx.stroke();
   let h=10,a=Math.atan2(Y2-Y1,X2-X1);
   ctx.beginPath();
   ctx.moveTo(X2,Y2);
   ctx.lineTo(X2-h*Math.cos(a-Math.PI/6),Y2-h*Math.sin(a-Math.PI/6));
   ctx.lineTo(X2-h*Math.cos(a+Math.PI/6),Y2-h*Math.sin(a+Math.PI/6));
   ctx.fill();
-
-  ctx.fillText(label,(X1+X2)/2+5,(Y1+Y2)/2);
+  ctx.fillText(l,(X1+X2)/2+5,(Y1+Y2)/2);
 }
 
 /* ===== TITIK ===== */
 function titik(x,y,n){
-  let X=offsetX+x*scale;
-  let Y=offsetY-y*scale;
-  ctx.beginPath();
-  ctx.arc(X,Y,3,0,2*Math.PI);
-  ctx.fill();
+  let X=offsetX+x*scale,Y=offsetY-y*scale;
+  ctx.beginPath(); ctx.arc(X,Y,3,0,2*Math.PI); ctx.fill();
   ctx.fillText(`${n}(${x},${y})`,X+5,Y-5);
 }
 
 /* ===== ZOOM ===== */
-function zoom(f){
-  scale*=f;
-  draw(lastData);
-}
+function zoom(f){ scale*=f; draw(lastData); }
 </script>
 
 </body>
