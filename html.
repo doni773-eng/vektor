@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vektor Interaktif Lengkap</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  padding:10px;
+  background:#f4f6f8;
+}
+h2{text-align:center;}
+.card{
+  background:white;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+input{width:60px;padding:5px;margin:3px;}
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:6px;
+  background:#007bff;
+  color:white;
+}
+.result{
+  margin-top:10px;
+  background:#eef;
+  padding:10px;
+  border-radius:6px;
+}
+canvas{
+  border:1px solid #ccc;
+  background:white;
+  touch-action:none;
+}
+.controls{text-align:center;margin-top:8px;}
+
+/* ===== VEKTOR KOLOM RAPI + KURUNG TINGGI ===== */
+.vektor{
+  display:inline-grid;
+  grid-template-columns:auto auto auto;
+  align-items:center;
+  gap:6px;
+  font-weight:bold;
+}
+
+.vektor .isi{
+  display:grid;
+  grid-template-rows:repeat(2, auto);
+  text-align:center;
+  line-height:1.4;
+}
+
+/* kurung ditinggikan */
+.kurung{
+  display:inline-block;
+  transform: scaleY(1.8);
+  font-size:1.2em;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📐 Vektor Interaktif (Lengkap)</h2>
+
+<!-- VEKTOR NEGATIF -->
+<div class="card">
+<h3>1️⃣ Vektor Negatif</h3>
+a = (<input id="ax" type="number"> , <input id="ay" type="number">)<br><br>
+<button onclick="negatif()">Cari</button>
+<div class="result" id="hasilNegatif"></div>
+</div>
+
+<!-- VEKTOR POSISI -->
+<div class="card">
+<h3>2️⃣ Vektor Posisi</h3>
+Titik A = (<input id="px" type="number"> , <input id="py" type="number">)<br><br>
+<button onclick="posisi()">Cari</button>
+<div class="result" id="hasilPosisi"></div>
+</div>
+
+<!-- VEKTOR NON POSISI -->
+<div class="card">
+<h3>3️⃣ & 4️⃣ Vektor Non Posisi + Grafik</h3>
+
+OA = (<input id="oax" type="number"> , <input id="oay" type="number">)<br>
+OB = (<input id="obx" type="number"> , <input id="oby" type="number">)<br><br>
+
+<button onclick="hitung()">Hitung & Gambar</button>
+<div class="result" id="hasilAB"></div><br>
+
+<canvas id="kanvas" width="460" height="460"></canvas>
+
+<div class="controls">
+<button onclick="zoom(1.2)">➕ Zoom</button>
+<button onclick="zoom(0.8)">➖ Zoom</button>
+</div>
+</div>
+
+<script>
+/* ===== TEMPLATE VEKTOR KOLOM ===== */
+function vektorHTML(x,y){
+  return `
+  <span class="vektor">
+    <span class="kurung">(</span>
+    <span class="isi">
+      <span>${x}</span>
+      <span>${y}</span>
+    </span>
+    <span class="kurung">)</span>
+  </span>`;
+}
+
+/* ===== VEKTOR NEGATIF ===== */
+function negatif(){
+  let x=ax.value, y=ay.value;
+  if(x===""||y===""){
+    hasilNegatif.innerHTML="⚠️ Masukkan kedua komponen vektor.";
+    return;
+  }
+  x=Number(x); y=Number(y);
+
+  hasilNegatif.innerHTML=`
+  Diketahui a = ${vektorHTML(x,y)}<br>
+  −a = ${vektorHTML(-x,-y)}
+  `;
+}
+
+/* ===== VEKTOR POSISI ===== */
+function posisi(){
+  let x=px.value, y=py.value;
+  if(x===""||y===""){
+    hasilPosisi.innerHTML="⚠️ Masukkan koordinat A.";
+    return;
+  }
+  hasilPosisi.innerHTML=`Vektor posisi OA = ${vektorHTML(x,y)}`;
+}
+
+/* ===== KANVAS ===== */
+let canvas=document.getElementById("kanvas");
+let ctx=canvas.getContext("2d");
+let scale=30;
+let offsetX=canvas.width/2;
+let offsetY=canvas.height/2;
+let lastData=null;
+
+/* ===== HITUNG ===== */
+function hitung(){
+  let a={x:+oax.value,y:+oay.value};
+  let b={x:+obx.value,y:+oby.value};
+  let ab={x:b.x-a.x,y:b.y-a.y};
+
+  hasilAB.innerHTML=`
+  AB = OB − OA<br><br>
+  OB = ${vektorHTML(b.x,b.y)}
+  −
+  OA = ${vektorHTML(a.x,a.y)}
+  <br><br>
+  <b>AB = ${vektorHTML(ab.x,ab.y)}</b>
+  `;
+
+  lastData={a,b,ab};
+  draw(lastData);
+}
+
+/* ===== GAMBAR ===== */
+function draw(data){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  grid();
+  angka();
+  if(!data) return;
+
+  vektor(0,0,data.a.x,data.a.y,"blue","OA");
+  vektor(0,0,data.b.x,data.b.y,"green","OB");
+  vektor(data.a.x,data.a.y,data.b.x,data.b.y,"red","AB");
+
+  titik(data.a.x,data.a.y,"A");
+  titik(data.b.x,data.b.y,"B");
+}
+
+/* ===== GRID ===== */
+function grid(){
+  ctx.strokeStyle="#ddd";
+  for(let i=-20;i<=20;i++){
+    ctx.beginPath();
+    ctx.moveTo(offsetX+i*scale,0);
+    ctx.lineTo(offsetX+i*scale,canvas.height);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0,offsetY+i*scale);
+    ctx.lineTo(canvas.width,offsetY+i*scale);
+    ctx.stroke();
+  }
+  ctx.strokeStyle="#000";
+  ctx.beginPath();
+  ctx.moveTo(0,offsetY);
+  ctx.lineTo(canvas.width,offsetY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(offsetX,0);
+  ctx.lineTo(offsetX,canvas.height);
+  ctx.stroke();
+}
+
+/* ===== ANGKA ===== */
+function angka(){
+  ctx.fillStyle="black";
+  ctx.font="12px Arial";
+  for(let i=-10;i<=10;i++){
+    ctx.fillText(i,offsetX+i*scale+2,offsetY+12);
+    ctx.fillText(i,offsetX+4,offsetY-i*scale-2);
+  }
+}
+
+/* ===== VEKTOR ===== */
+function vektor(x1,y1,x2,y2,color,label){
+  let X1=offsetX+x1*scale;
+  let Y1=offsetY-y1*scale;
+  let X2=offsetX+x2*scale;
+  let Y2=offsetY-y2*scale;
+
+  ctx.strokeStyle=color;
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(X1,Y1);
+  ctx.lineTo(X2,Y2);
+  ctx.stroke();
+
+  let h=10,a=Math.atan2(Y2-Y1,X2-X1);
+  ctx.beginPath();
+  ctx.moveTo(X2,Y2);
+  ctx.lineTo(X2-h*Math.cos(a-Math.PI/6),Y2-h*Math.sin(a-Math.PI/6));
+  ctx.lineTo(X2-h*Math.cos(a+Math.PI/6),Y2-h*Math.sin(a+Math.PI/6));
+  ctx.fill();
+
+  ctx.fillText(label,(X1+X2)/2+5,(Y1+Y2)/2);
+}
+
+/* ===== TITIK ===== */
+function titik(x,y,n){
+  let X=offsetX+x*scale;
+  let Y=offsetY-y*scale;
+  ctx.beginPath();
+  ctx.arc(X,Y,3,0,2*Math.PI);
+  ctx.fill();
+  ctx.fillText(`${n}(${x},${y})`,X+5,Y-5);
+}
+
+/* ===== ZOOM ===== */
+function zoom(f){
+  scale*=f;
+  draw(lastData);
+}
+</script>
+
+</body>
+</html>
