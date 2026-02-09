@@ -20,7 +20,7 @@
     .quiz-container{text-align: center; padding: 15px; border: 2px dashed #007bff; border-radius: 10px; background: #fdfdfd;}
     #badgeQuiz { display: inline-block; padding: 2px 8px; background: #007bff; color: white; border-radius: 4px; font-size: 12px; margin-bottom: 10px; }
     
-    /* Halaman Intro Sesuai Request */
+    /* Halaman Intro */
     #intro-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; display: flex; align-items: center; justify-content: center; z-index: 9999; text-align: center; }
     #main-app { display: none; }
     .btn-ya { background: #28a745 !important; }
@@ -36,13 +36,13 @@
         <h2>Apakah anda menyukai Matematika dan Pak Doni? 😊</h2>
         <button class="btn-ya" onclick="mulai()">Ya</button>
         <button id="btnTidak" class="btn-tidak" onclick="peringatan()">Tidak</button>
-        <p id="msg" style="display:none; color:red; font-weight:bold; margin-top:10px;">oke gitu ya tidak suka sama saya 😡, lo gue end/p>
+        <p id="msg" style="display:none; color:red; font-weight:bold; margin-top:10px;">oke gitu ya tidak suka sama saya 😡, lo gue end</p>
     </div>
 </div>
 
 <div id="main-app">
-    <h2>📐 Vektor Interaktif Lengkap</h2></br>
-    Created by Doni Stiawan, S.Mat, Gr.</h2></br>
+    <h2>📐 Vektor Interaktif Lengkap</h2>
+    <p style="text-align:center; font-weight:bold;">Created by Doni Stiawan, S.Mat, Gr.</p>
 
     <div class="card">
         <h3>1️⃣ Vektor Negatif</h3>
@@ -87,7 +87,8 @@
             <div id="badgeQuiz">Mode: Acak</div>
             <p id="soalQuiz">Siap menguji kemampuanmu?</p>
             <div id="inputQuiz" style="display:none; margin-bottom: 10px;">
-                Hasil x: <input id="ansX" type="number"> </br> Hasil y: <input id="ansY" type="number">
+                Hasil x: <input id="ansX" type="number"><br>
+                Hasil y: <input id="ansY" type="number">
                 <br><br><button onclick="checkQuiz()">Periksa Jawaban</button>
             </div>
             <button id="btnStartQuiz" onclick="generateQuiz()">Mulai Quiz Baru</button>
@@ -97,17 +98,16 @@
 </div>
 
 <script>
-// Logika Halaman Intro
 function mulai() { document.getElementById('intro-page').style.display='none'; document.getElementById('main-app').style.display='block'; redrawNP(); redrawOP(); }
 function peringatan() { document.getElementById('msg').style.display='block'; document.getElementById('btnTidak').style.display='none'; }
 
-// Logika Vektor (Asli punya kamu)
 function vHTML(x, y) { return `\\( \\begin{pmatrix} ${x} \\\\ ${y} \\end{pmatrix} \\)`; }
 function ambilNilai(id) {
     let val = document.getElementById(id).value;
     if (val.trim() === "") { alert("Isi angka dulu ya!"); throw new Error("Empty"); }
     return +val;
 }
+
 function negatif(){
     try {
         let x=ambilNilai('ax'), y=ambilNilai('ay');
@@ -115,19 +115,22 @@ function negatif(){
         MathJax.typeset();
     } catch(e){}
 }
+
 function posisi(){
     try {
         let x=ambilNilai('px'), y=ambilNilai('py');
-        document.getElementById('hasilPosisi').innerHTML=`<b>Hasil:</b> \\(\\vec{OA}\\) = ${vHTML(x,y)}`;
+        document.getElementById('hasilPosisi').innerHTML=`<b>Langkah:</b> Titik (${x},${y}) langsung menjadi komponen vektor.<br><b>Hasil:</b> \\(\\vec{OA}\\) = ${vHTML(x,y)}`;
         MathJax.typeset();
     } catch(e){}
 }
+
 function drawDashedGuide(ctx, ox, oy, scale, x, y, color) {
     ctx.setLineDash([5, 5]); ctx.strokeStyle = color; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(ox + x * scale, oy - y * scale); ctx.lineTo(ox + x * scale, oy);
     ctx.moveTo(ox + x * scale, oy - y * scale); ctx.lineTo(ox, oy - y * scale); ctx.stroke();
     ctx.setLineDash([]);
 }
+
 function drawVector(ctx,ox,oy,scale,x1,y1,x2,y2,color,label, progress = 1.0){
     let X1=ox+x1*scale, Y1=oy-y1*scale, curX2 = x1+(x2-x1)*progress, curY2 = y1+(y2-y1)*progress, X2=ox+curX2*scale, Y2=oy-curY2*scale;
     ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(X1, Y1, 3.5, 0, Math.PI * 2); ctx.fill();
@@ -144,12 +147,15 @@ function drawVector(ctx,ox,oy,scale,x1,y1,x2,y2,color,label, progress = 1.0){
         ctx.fillStyle = color; ctx.fillText(label, midX, midY - 12);
     }
 }
+
 function setupCanvas(id){
     let c=document.getElementById(id); c.width=450; c.height=450;
     return {c, ctx:c.getContext("2d"), scale:50, ox:225, oy:225, drag:false, x0:0, y0:0, lastDist:0};
 }
+
 let NP=setupCanvas("kanvasNP"), OP=setupCanvas("kanvasOP");
 let dataNP=null, dataOP=null;
+
 function drawGrid(ctx, ox, oy, scale, showAxes = true){
     ctx.clearRect(0,0,450,450);
     ctx.strokeStyle="#eee"; ctx.lineWidth=1;
@@ -165,14 +171,17 @@ function drawGrid(ctx, ox, oy, scale, showAxes = true){
         for(let i=sY; i<=eY; i++) if(i!==0) ctx.fillText(i, ox-18, oy-i*scale+5);
     }
 }
+
 function nonPosisi(){
     try {
-        dataNP={a:{x:ambilNilai('oax'), y:ambilNilai('oay')}, b:{x:ambilNilai('obx'), y:ambilNilai('oby')}};
-        let dx=dataNP.b.x-dataNP.a.x, dy=dataNP.b.y-dataNP.a.y;
-        document.getElementById('hasilAB').innerHTML=`<b>Langkah:</b> B - A = (${dx}, ${dy})<br><b>Hasil:</b> \\(\\vec{AB}\\) = ${vHTML(dx,dy)}`;
+        let x1=ambilNilai('oax'), y1=ambilNilai('oay'), x2=ambilNilai('obx'), y2=ambilNilai('oby');
+        dataNP={a:{x:x1, y:y1}, b:{x:x2, y:y2}};
+        let dx=x2-x1, dy=y2-y1;
+        document.getElementById('hasilAB').innerHTML=`<b>Langkah:</b> B(${x2},${y2}) - A(${x1},${y1}) = (${x2}-${x1}, ${y2}-${y1})<br><b>Hasil:</b> \\(\\vec{AB}\\) = ${vHTML(dx,dy)}`;
         MathJax.typeset(); animateNP();
     } catch(e){}
 }
+
 function animateNP() {
     let start = null;
     function step(ts) {
@@ -187,38 +196,49 @@ function animateNP() {
     }
     requestAnimationFrame(step);
 }
+
 function setupOPData(tipe){
     try {
-        dataOP={a:{x:ambilNilai('ax2'),y:ambilNilai('ay2')}, b:{x:ambilNilai('bx2'),y:ambilNilai('by2')}, t:tipe};
-        let dx=tipe==="+"?dataOP.a.x+dataOP.b.x:dataOP.a.x-dataOP.b.x, dy=tipe==="+"?dataOP.a.y+dataOP.b.y:dataOP.a.y-dataOP.b.y;
-        document.getElementById('hasilJumlah').innerHTML=`<b>Hasil:</b> ${vHTML(dx,dy)}`;
+        let ax=ambilNilai('ax2'), ay=ambilNilai('ay2'), bx=ambilNilai('bx2'), by=ambilNilai('by2');
+        dataOP={a:{x:ax,y:ay}, b:{x:bx,y:by}, t:tipe};
+        let rx = tipe==="+" ? ax+bx : ax-bx;
+        let ry = tipe==="+" ? ay+by : ay-by;
+        let opSimbol = tipe==="+" ? "+" : "-";
+        document.getElementById('hasilJumlah').innerHTML=`<b>Langkah:</b> (${ax} ${opSimbol} ${bx}, ${ay} ${opSimbol} ${by})<br><b>Hasil:</b> \\(\\vec{a} ${opSimbol} \\vec{b}\\) = ${vHTML(rx,ry)}`;
         MathJax.typeset(); animateOP();
     } catch(e){}
 }
+
 function animateOP() {
     let start=null;
     function step(ts){
         if(!start) start=ts; let p=(ts-start)/1500; if(p>1) p=1;
         drawGrid(OP.ctx, OP.ox, OP.oy, OP.scale, false);
-        let curDx=dataOP.t==="+"?dataOP.a.x+dataOP.b.x:dataOP.a.x-dataOP.b.x, curDy=dataOP.t==="+"?dataOP.a.y+dataOP.b.y:dataOP.a.y-dataOP.b.y;
+        let curBx = dataOP.t==="+" ? dataOP.b.x : -dataOP.b.x;
+        let curBy = dataOP.t==="+" ? dataOP.b.y : -dataOP.b.y;
+        let finalX = dataOP.a.x + curBx;
+        let finalY = dataOP.a.y + curBy;
+        
         drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dataOP.a.x,dataOP.a.y,"blue","a",Math.min(1,p*3));
-        if(p>0.33) drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,dataOP.a.x,dataOP.a.y,curDx,curDy,"green",dataOP.t==="+"?"b":"-b",Math.min(1,(p-0.33)*3));
-        if(p>0.66) drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,curDx,curDy,"red","hasil",Math.min(1,(p-0.66)*3));
+        if(p>0.33) drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,dataOP.a.x,dataOP.a.y,finalX,finalY,"green",dataOP.t==="+"?"b":"-b",Math.min(1,(p-0.33)*3));
+        if(p>0.66) drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,finalX,finalY,"red","hasil",Math.min(1,(p-0.66)*3));
         if(p<1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
 }
+
 function jumlah(){ setupOPData("+"); }
 function kurang(){ setupOPData("-"); }
+
 function redrawNP(){ drawGrid(NP.ctx, NP.ox, NP.oy, NP.scale, true); if(dataNP){ drawDashedGuide(NP.ctx, NP.ox, NP.oy, NP.scale, dataNP.a.x, dataNP.a.y, "#aaa"); drawDashedGuide(NP.ctx, NP.ox, NP.oy, NP.scale, dataNP.b.x, dataNP.b.y, "#aaa"); drawVector(NP.ctx,NP.ox,NP.oy,NP.scale,0,0,dataNP.a.x,dataNP.a.y,"blue","OA"); drawVector(NP.ctx,NP.ox,NP.oy,NP.scale,0,0,dataNP.b.x,dataNP.b.y,"green","OB"); drawVector(NP.ctx,NP.ox,NP.oy,NP.scale,dataNP.a.x,dataNP.a.y,dataNP.b.x,dataNP.b.y,"red","AB"); }}
-function redrawOP(){ drawGrid(OP.ctx, OP.ox, OP.oy, OP.scale, false); if(dataOP){ let dx=(dataOP.t==="+"?dataOP.a.x+dataOP.b.x:dataOP.a.x-dataOP.b.x), dy=(dataOP.t==="+"?dataOP.a.y+dataOP.b.y:dataOP.a.y-dataOP.b.y); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dataOP.a.x,dataOP.a.y,"blue","a"); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,dataOP.a.x,dataOP.a.y,dx,dy,"green",dataOP.t==="+"?"b":"-b"); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dx,dy,"red","hasil"); }}
+function redrawOP(){ drawGrid(OP.ctx, OP.ox, OP.oy, OP.scale, false); if(dataOP){ let bx = dataOP.t==="+"?dataOP.b.x:-dataOP.b.x; let by = dataOP.t==="+"?dataOP.b.y:-dataOP.b.y; drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dataOP.a.x,dataOP.a.y,"blue","a"); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,dataOP.a.x,dataOP.a.y,dataOP.a.x+bx,dataOP.a.y+by,"green",dataOP.t==="+"?"b":"-b"); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dataOP.a.x+bx,dataOP.a.y+by,"red","hasil"); }}
+
 function downloadCanvas(id, name) { const link = document.createElement('a'); link.download = name + '.png'; link.href = document.getElementById(id).toDataURL(); link.click(); }
 function updateSliderNP(v) { v=Math.max(10, Math.min(150, v)); NP.scale=v; document.getElementById('zoomNP').value=v; document.getElementById('zNP').textContent=Math.round(v); redrawNP(); }
 function updateSliderOP(v) { v=Math.max(10, Math.min(150, v)); OP.scale=v; document.getElementById('zoomOP').value=v; document.getElementById('zOP').textContent=Math.round(v); redrawOP(); }
 zoomNP.oninput=()=>{ updateSliderNP(+zoomNP.value); }
 zoomOP.oninput=()=>{ updateSliderOP(+zoomOP.value); }
 
-// PERBAIKAN DRAG (Bisa Mouse & Touch)
 function makeDraggable(o){
     let c=o.c;
     const getD=(t)=>Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
@@ -230,7 +250,6 @@ function makeDraggable(o){
     c.addEventListener('touchend', ()=>o.drag=false);
 }
 
-// Quiz Asli
 let curQ = {};
 function generateQuiz() {
     const types = ['negatif', 'posisi', 'non-posisi', 'jumlah', 'kurang'];
