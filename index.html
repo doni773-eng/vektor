@@ -249,8 +249,8 @@ function generateQuiz() {
 function checkQuiz() {
     const ux=parseInt(document.getElementById('ansX').value), uy=parseInt(document.getElementById('ansY').value);
     const fb=document.getElementById('feedbackQuiz');
-    if(ux===curQ.dx && uy===curQ.dy) fb.innerHTML="<span style='color:green'>✅ Betul!</span>";
-    else fb.innerHTML=`<span style='color:red'>❌ Salah. Jawaban: (${curQ.dx}, ${curQ.dy})</span>`;
+    if(ux===curQ.dx && uy===curQ.dy) fb.innerHTML="<span style='color:green'>✅ Mantap Men 👍</span>";
+    else fb.innerHTML=`<span style='color:red'>❌ Alamak najisnya salah. Jawaban: (${curQ.dx}, ${curQ.dy})</span>`;
 }
 makeDraggable(NP); makeDraggable(OP);
 window.onload = () => { drawGrid(NP.ctx, 225, 225, 50, true); drawGrid(OP.ctx, 225, 225, 50, false); };
