@@ -171,13 +171,12 @@ function drawGrid(ctx, ox, oy, scale, showAxes = true){
         for(let i=sY; i<=eY; i++) if(i!==0) ctx.fillText(i, ox-18, oy-i*scale+5);
     }
 }
-
 function nonPosisi(){
     try {
         let x1=ambilNilai('oax'), y1=ambilNilai('oay'), x2=ambilNilai('obx'), y2=ambilNilai('oby');
         dataNP={a:{x:x1, y:y1}, b:{x:x2, y:y2}};
         let dx=x2-x1, dy=y2-y1;
-        document.getElementById('hasilAB').innerHTML=`<b>Langkah:</b> B(${x2},${y2}) - A(${x1},${y1}) = (${x2}-${x1}, ${y2}-${y1})<br><b>Hasil:</b> \\(\\vec{AB}\\) = ${vHTML(dx,dy)}`;
+        document.getElementById('hasilAB').innerHTML=`<b>Langkah:</b> \\(\\vec{a}\\) (${x2},${y2}) - \\(\\vec{b}\\) (${x1},${y1}) = (${x2}-${x1}, ${y2}-${y1})<br><b>Hasil:</b> \\(\\vec{AB}\\) = ${vHTML(dx,dy)}`;
         MathJax.typeset(); animateNP();
     } catch(e){}
 }
