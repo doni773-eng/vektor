@@ -19,74 +19,94 @@
     .controls{text-align:center;margin-top:8px; font-weight: bold; color: #666;}
     .quiz-container{text-align: center; padding: 15px; border: 2px dashed #007bff; border-radius: 10px; background: #fdfdfd;}
     #badgeQuiz { display: inline-block; padding: 2px 8px; background: #007bff; color: white; border-radius: 4px; font-size: 12px; margin-bottom: 10px; }
+    
+    /* Halaman Intro Sesuai Request */
+    #intro-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; display: flex; align-items: center; justify-content: center; z-index: 9999; text-align: center; }
+    #main-app { display: none; }
+    .btn-ya { background: #28a745 !important; }
+    .btn-tidak { background: #dc3545 !important; }
 </style>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
-<h2>📐 Vektor Interaktif Lengkap + Animasi</h2>
-
-<div class="card">
-    <h3>1️⃣ Vektor Negatif</h3>
-    \(\vec{a}\) = (<input id="ax" placeholder="x"> , <input id="ay" placeholder="y">)
-    <button onclick="negatif()">Cari</button>
-    <div class="result" id="hasilNegatif"></div>
+<div id="intro-page">
+    <div class="card">
+        <h2>Apakah anda menyukai matematika dan Pak Doni? 😊</h2>
+        <button class="btn-ya" onclick="mulai()">Ya</button>
+        <button id="btnTidak" class="btn-tidak" onclick="peringatan()">Tidak</button>
+        <p id="msg" style="display:none; color:red; font-weight:bold; margin-top:10px;">nama anda akan terkirim ke pak doni karena tidak menyukainya, maka anda wajib menekan iya.</p>
+    </div>
 </div>
 
-<div class="card">
-    <h3>2️⃣ Vektor Posisi</h3>
-    \(\vec{OA}\) = (<input id="px" placeholder="x"> , <input id="py" placeholder="y">)
-    <button onclick="posisi()">Cari</button>
-    <div class="result" id="hasilPosisi"></div>
-</div>
+<div id="main-app">
+    <h2>📐 Vektor Interaktif Lengkap + Animasi</h2>
 
-<div class="card">
-    <h3>3️⃣ Vektor Non Posisi</h3>
-    \(\vec{a}\) = (<input id="oax" placeholder="x1"> , <input id="oay" placeholder="y1">)<br>
-    \(\vec{b}\) = (<input id="obx" placeholder="x2"> , <input id="oby" placeholder="y2">)<br>
-    <button onclick="nonPosisi()">Hitung & Gambar</button>
-    <button class="btn-download" onclick="downloadCanvas('kanvasNP', 'Vektor_Non_Posisi')">📥 Simpan Gambar</button>
-    <div class="result" id="hasilAB"></div>
-    <canvas id="kanvasNP"></canvas>
-    <div class="controls">Zoom: <input type="range" id="zoomNP" min="10" max="150" value="50"> <span id="zNP">50</span></div>
-</div>
+    <div class="card">
+        <h3>1️⃣ Vektor Negatif</h3>
+        \(\vec{a}\) = (<input id="ax" placeholder="x"> , <input id="ay" placeholder="y">)
+        <button onclick="negatif()">Cari</button>
+        <div class="result" id="hasilNegatif"></div>
+    </div>
 
-<div class="card">
-    <h3>4️⃣ Operasi Vektor</h3>
-    \(\vec{a}\) = (<input id="ax2" placeholder="ax"> , <input id="ay2" placeholder="ay">)<br>
-    \(\vec{b}\) = (<input id="bx2" placeholder="bx"> , <input id="by2" placeholder="by">)<br>
-    <button onclick="jumlah()">a + b</button>
-    <button onclick="kurang()">a − b</button>
-    <button class="btn-download" onclick="downloadCanvas('kanvasOP', 'Operasi_Vektor')">📥 Simpan Gambar</button>
-    <div class="result" id="hasilJumlah"></div>
-    <canvas id="kanvasOP"></canvas>
-    <div class="controls">Zoom: <input type="range" id="zoomOP" min="10" max="150" value="50"> <span id="zOP">50</span></div>
-</div>
+    <div class="card">
+        <h3>2️⃣ Vektor Posisi</h3>
+        \(\vec{OA}\) = (<input id="px" placeholder="x"> , <input id="py" placeholder="y">)
+        <button onclick="posisi()">Cari</button>
+        <div class="result" id="hasilPosisi"></div>
+    </div>
 
-<div class="card">
-    <h3>🎯 Tantangan Vektor (Quiz Campuran)</h3>
-    <div class="quiz-container">
-        <div id="badgeQuiz">Mode: Acak</div>
-        <p id="soalQuiz">Siap menguji kemampuanmu?</p>
-        <div id="inputQuiz" style="display:none; margin-bottom: 10px;">
-            Hasil x: <input id="ansX" type="number"> Hasil y: <input id="ansY" type="number">
-            <br><br><button onclick="checkQuiz()">Periksa Jawaban</button>
+    <div class="card">
+        <h3>3️⃣ Vektor Non Posisi</h3>
+        \(\vec{a}\) = (<input id="oax" placeholder="x1"> , <input id="oay" placeholder="y1">)<br>
+        \(\vec{b}\) = (<input id="obx" placeholder="x2"> , <input id="oby" placeholder="y2">)<br>
+        <button onclick="nonPosisi()">Hitung & Gambar</button>
+        <button class="btn-download" onclick="downloadCanvas('kanvasNP', 'Vektor_Non_Posisi')">📥 Simpan Gambar</button>
+        <div class="result" id="hasilAB"></div>
+        <canvas id="kanvasNP"></canvas>
+        <div class="controls">Zoom: <input type="range" id="zoomNP" min="10" max="150" value="50"> <span id="zNP">50</span></div>
+    </div>
+
+    <div class="card">
+        <h3>4️⃣ Operasi Vektor</h3>
+        \(\vec{a}\) = (<input id="ax2" placeholder="ax"> , <input id="ay2" placeholder="ay">)<br>
+        \(\vec{b}\) = (<input id="bx2" placeholder="bx"> , <input id="by2" placeholder="by">)<br>
+        <button onclick="jumlah()">a + b</button>
+        <button onclick="kurang()">a − b</button>
+        <button class="btn-download" onclick="downloadCanvas('kanvasOP', 'Operasi_Vektor')">📥 Simpan Gambar</button>
+        <div class="result" id="hasilJumlah"></div>
+        <canvas id="kanvasOP"></canvas>
+        <div class="controls">Zoom: <input type="range" id="zoomOP" min="10" max="150" value="50"> <span id="zOP">50</span></div>
+    </div>
+
+    <div class="card">
+        <h3>🎯 Tantangan Vektor (Quiz Campuran)</h3>
+        <div class="quiz-container">
+            <div id="badgeQuiz">Mode: Acak</div>
+            <p id="soalQuiz">Siap menguji kemampuanmu?</p>
+            <div id="inputQuiz" style="display:none; margin-bottom: 10px;">
+                Hasil x: <input id="ansX" type="number"> Hasil y: <input id="ansY" type="number">
+                <br><br><button onclick="checkQuiz()">Periksa Jawaban</button>
+            </div>
+            <button id="btnStartQuiz" onclick="generateQuiz()">Mulai Quiz Baru</button>
+            <div id="feedbackQuiz" style="margin-top:10px; font-weight:bold;"></div>
         </div>
-        <button id="btnStartQuiz" onclick="generateQuiz()">Mulai Quiz Baru</button>
-        <div id="feedbackQuiz" style="margin-top:10px; font-weight:bold;"></div>
     </div>
 </div>
 
 <script>
-// --- FUNGSI DASAR (Sama dengan kodinganmu) ---
+// Logika Halaman Intro
+function mulai() { document.getElementById('intro-page').style.display='none'; document.getElementById('main-app').style.display='block'; redrawNP(); redrawOP(); }
+function peringatan() { document.getElementById('msg').style.display='block'; document.getElementById('btnTidak').style.display='none'; }
+
+// Logika Vektor (Asli punya kamu)
 function vHTML(x, y) { return `\\( \\begin{pmatrix} ${x} \\\\ ${y} \\end{pmatrix} \\)`; }
 function ambilNilai(id) {
     let val = document.getElementById(id).value;
     if (val.trim() === "") { alert("Isi angka dulu ya!"); throw new Error("Empty"); }
     return +val;
 }
-
 function negatif(){
     try {
         let x=ambilNilai('ax'), y=ambilNilai('ay');
@@ -94,7 +114,6 @@ function negatif(){
         MathJax.typeset();
     } catch(e){}
 }
-
 function posisi(){
     try {
         let x=ambilNilai('px'), y=ambilNilai('py');
@@ -102,15 +121,12 @@ function posisi(){
         MathJax.typeset();
     } catch(e){}
 }
-
-// --- FUNGSI GAMBAR ---
 function drawDashedGuide(ctx, ox, oy, scale, x, y, color) {
     ctx.setLineDash([5, 5]); ctx.strokeStyle = color; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(ox + x * scale, oy - y * scale); ctx.lineTo(ox + x * scale, oy);
     ctx.moveTo(ox + x * scale, oy - y * scale); ctx.lineTo(ox, oy - y * scale); ctx.stroke();
     ctx.setLineDash([]);
 }
-
 function drawVector(ctx,ox,oy,scale,x1,y1,x2,y2,color,label, progress = 1.0){
     let X1=ox+x1*scale, Y1=oy-y1*scale, curX2 = x1+(x2-x1)*progress, curY2 = y1+(y2-y1)*progress, X2=ox+curX2*scale, Y2=oy-curY2*scale;
     ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(X1, Y1, 3.5, 0, Math.PI * 2); ctx.fill();
@@ -127,15 +143,12 @@ function drawVector(ctx,ox,oy,scale,x1,y1,x2,y2,color,label, progress = 1.0){
         ctx.fillStyle = color; ctx.fillText(label, midX, midY - 12);
     }
 }
-
 function setupCanvas(id){
     let c=document.getElementById(id); c.width=450; c.height=450;
-    return {c, ctx:c.getContext("2d"), scale:30, ox:225, oy:225, drag:false, x0:0, y0:0, lastDist:0};
+    return {c, ctx:c.getContext("2d"), scale:50, ox:225, oy:225, drag:false, x0:0, y0:0, lastDist:0};
 }
-
 let NP=setupCanvas("kanvasNP"), OP=setupCanvas("kanvasOP");
 let dataNP=null, dataOP=null;
-
 function drawGrid(ctx, ox, oy, scale, showAxes = true){
     ctx.clearRect(0,0,450,450);
     ctx.strokeStyle="#eee"; ctx.lineWidth=1;
@@ -151,7 +164,6 @@ function drawGrid(ctx, ox, oy, scale, showAxes = true){
         for(let i=sY; i<=eY; i++) if(i!==0) ctx.fillText(i, ox-18, oy-i*scale+5);
     }
 }
-
 function nonPosisi(){
     try {
         dataNP={a:{x:ambilNilai('oax'), y:ambilNilai('oay')}, b:{x:ambilNilai('obx'), y:ambilNilai('oby')}};
@@ -160,7 +172,6 @@ function nonPosisi(){
         MathJax.typeset(); animateNP();
     } catch(e){}
 }
-
 function animateNP() {
     let start = null;
     function step(ts) {
@@ -175,7 +186,6 @@ function animateNP() {
     }
     requestAnimationFrame(step);
 }
-
 function setupOPData(tipe){
     try {
         dataOP={a:{x:ambilNilai('ax2'),y:ambilNilai('ay2')}, b:{x:ambilNilai('bx2'),y:ambilNilai('by2')}, t:tipe};
@@ -184,7 +194,6 @@ function setupOPData(tipe){
         MathJax.typeset(); animateOP();
     } catch(e){}
 }
-
 function animateOP() {
     let start=null;
     function step(ts){
@@ -198,67 +207,29 @@ function animateOP() {
     }
     requestAnimationFrame(step);
 }
-
 function jumlah(){ setupOPData("+"); }
 function kurang(){ setupOPData("-"); }
-
 function redrawNP(){ drawGrid(NP.ctx, NP.ox, NP.oy, NP.scale, true); if(dataNP){ drawDashedGuide(NP.ctx, NP.ox, NP.oy, NP.scale, dataNP.a.x, dataNP.a.y, "#aaa"); drawDashedGuide(NP.ctx, NP.ox, NP.oy, NP.scale, dataNP.b.x, dataNP.b.y, "#aaa"); drawVector(NP.ctx,NP.ox,NP.oy,NP.scale,0,0,dataNP.a.x,dataNP.a.y,"blue","OA"); drawVector(NP.ctx,NP.ox,NP.oy,NP.scale,0,0,dataNP.b.x,dataNP.b.y,"green","OB"); drawVector(NP.ctx,NP.ox,NP.oy,NP.scale,dataNP.a.x,dataNP.a.y,dataNP.b.x,dataNP.b.y,"red","AB"); }}
 function redrawOP(){ drawGrid(OP.ctx, OP.ox, OP.oy, OP.scale, false); if(dataOP){ let dx=(dataOP.t==="+"?dataOP.a.x+dataOP.b.x:dataOP.a.x-dataOP.b.x), dy=(dataOP.t==="+"?dataOP.a.y+dataOP.b.y:dataOP.a.y-dataOP.b.y); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dataOP.a.x,dataOP.a.y,"blue","a"); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,dataOP.a.x,dataOP.a.y,dx,dy,"green",dataOP.t==="+"?"b":"-b"); drawVector(OP.ctx,OP.ox,OP.oy,OP.scale,0,0,dx,dy,"red","hasil"); }}
-
 function downloadCanvas(id, name) { const link = document.createElement('a'); link.download = name + '.png'; link.href = document.getElementById(id).toDataURL(); link.click(); }
-
-// --- QUIZ & SLIDER (Original Logic) ---
 function updateSliderNP(v) { v=Math.max(10, Math.min(150, v)); NP.scale=v; document.getElementById('zoomNP').value=v; document.getElementById('zNP').textContent=Math.round(v); redrawNP(); }
 function updateSliderOP(v) { v=Math.max(10, Math.min(150, v)); OP.scale=v; document.getElementById('zoomOP').value=v; document.getElementById('zOP').textContent=Math.round(v); redrawOP(); }
 zoomNP.oninput=()=>{ updateSliderNP(+zoomNP.value); }
 zoomOP.oninput=()=>{ updateSliderOP(+zoomOP.value); }
 
-// --- PERBAIKAN: INTERAKSI MOUSE & SENTUH ---
+// PERBAIKAN DRAG (Bisa Mouse & Touch)
 function makeDraggable(o){
     let c=o.c;
     const getD=(t)=>Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
-
-    // MOUSE EVENTS (Laptop)
-    c.addEventListener('mousedown', e => {
-        o.drag = true;
-        o.x0 = e.clientX; o.y0 = e.clientY;
-        c.style.cursor = 'grabbing';
-    });
-    window.addEventListener('mousemove', e => {
-        if (!o.drag) return;
-        o.ox += e.clientX - o.x0; o.oy += e.clientY - o.y0;
-        o.x0 = e.clientX; o.y0 = e.clientY;
-        o === NP ? redrawNP() : redrawOP();
-    });
-    window.addEventListener('mouseup', () => { o.drag = false; c.style.cursor = 'grab'; });
-
-    // TOUCH EVENTS (HP)
-    c.addEventListener('touchstart', e=>{
-        if(e.touches.length===2) o.lastDist=getD(e.touches);
-        else { 
-            o.drag=true; 
-            o.x0=e.touches[0].clientX; o.y0=e.touches[0].clientY; 
-        }
-        e.preventDefault();
-    }, {passive:false});
-
-    c.addEventListener('touchmove', e=>{
-        if(e.touches.length===2){
-            let d=getD(e.touches); let delta=(d-o.lastDist)*0.5;
-            o===NP ? updateSliderNP(o.scale+delta) : updateSliderOP(o.scale+delta);
-            o.lastDist=d;
-        } else if(o.drag){
-            let x=e.touches[0].clientX, y=e.touches[0].clientY;
-            o.ox+=x-o.x0; o.oy+=y-o.y0;
-            o.x0=x; o.y0=y;
-            o===NP?redrawNP():redrawOP();
-        }
-        e.preventDefault();
-    }, {passive:false});
+    c.addEventListener('mousedown', e => { o.drag = true; o.x0 = e.clientX; o.y0 = e.clientY; });
+    window.addEventListener('mousemove', e => { if (!o.drag) return; o.ox += e.clientX - o.x0; o.oy += e.clientY - o.y0; o.x0 = e.clientX; o.y0 = e.clientY; o === NP ? redrawNP() : redrawOP(); });
+    window.addEventListener('mouseup', () => { o.drag = false; });
+    c.addEventListener('touchstart', e=>{ if(e.touches.length===2) o.lastDist=getD(e.touches); else { o.drag=true; o.x0=e.touches[0].clientX; o.y0=e.touches[0].clientY; } e.preventDefault(); }, {passive:false});
+    c.addEventListener('touchmove', e=>{ if(e.touches.length===2){ let d=getD(e.touches); let delta=(d-o.lastDist)*0.5; o===NP ? updateSliderNP(o.scale+delta) : updateSliderOP(o.scale+delta); o.lastDist=d; } else if(o.drag){ let x=e.touches[0].clientX, y=e.touches[0].clientY; o.ox+=x-o.x0; o.oy+=y-o.y0; o.x0=x; o.y0=y; o===NP?redrawNP():redrawOP(); } e.preventDefault(); }, {passive:false});
     c.addEventListener('touchend', ()=>o.drag=false);
 }
 
-// --- QUIZ SYSTEM (Sama dengan kodinganmu) ---
+// Quiz Asli
 let curQ = {};
 function generateQuiz() {
     const types = ['negatif', 'posisi', 'non-posisi', 'jumlah', 'kurang'];
@@ -281,9 +252,8 @@ function checkQuiz() {
     if(ux===curQ.dx && uy===curQ.dy) fb.innerHTML="<span style='color:green'>✅ Betul!</span>";
     else fb.innerHTML=`<span style='color:red'>❌ Salah. Jawaban: (${curQ.dx}, ${curQ.dy})</span>`;
 }
-
 makeDraggable(NP); makeDraggable(OP);
-window.onload = () => { drawGrid(NP.ctx, 225, 225, 30, true); drawGrid(OP.ctx, 225, 225, 30, false); };
+window.onload = () => { drawGrid(NP.ctx, 225, 225, 50, true); drawGrid(OP.ctx, 225, 225, 50, false); };
 </script>
 </body>
 </html>
